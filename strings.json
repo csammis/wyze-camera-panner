@@ -1,0 +1,22 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Configuration",
+        "description": "Enter the information for the docker-wyze-bridge managing the camera",
+        "data": {
+          "host": "Hostname",
+          "port": "Port",
+          "name": "Camera name"
+        }
+      }
+    },
+    "error": {
+      "status-not-found": "Could not connect to camera - is the bridge up and camera enabled?",
+      "unsupported-model": "Only Wyze Pan V3 cameras are supported at this time."
+    },
+    "abort": {
+      "already-configured": "This camera is already configured in Home Assistant."
+    }
+  }
+}
