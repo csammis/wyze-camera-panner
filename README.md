@@ -11,7 +11,7 @@ The "Privacy Mode" implemented by this integration is not Wyze's true Privacy Mo
 
 ## Requirements
 ### docker-wyze-bridge
-This integration requires [docker-wyze-bridge](https://github.com/mrlt8/docker-wyze-bridge/) installed and set up to communicate with the cameras to be controlled.
+This integration requires [docker-wyze-bridge](https://github.com/mrlt8/docker-wyze-bridge/) 2.0.0 or later installed and set up to communicate with the cameras to be controlled.
 ### ffmpeg
 wyze-camera-panner displays the camera feed using the [ffmpeg](https://www.home-assistant.io/integrations/ffmpeg/) integration which must be separately installed and configured.
 ## Installation

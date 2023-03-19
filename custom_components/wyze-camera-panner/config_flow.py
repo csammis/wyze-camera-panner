@@ -33,6 +33,7 @@ class WyzeCameraPannerConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 user_input[CONF_PORT],
                 user_input[CONF_NAME],
                 session,
+                ""
             )
             mac = await camera.get_camera_mac()
             if mac is None:

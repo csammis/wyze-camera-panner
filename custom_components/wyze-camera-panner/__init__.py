@@ -1,6 +1,8 @@
 """Wyze Camera Panner module."""
 from __future__ import annotations
 
+import logging
+
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
     CONF_HOST,
@@ -13,7 +15,6 @@ from homeassistant.components.remote import RemoteEntity
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.entity import DeviceInfo
 
-import logging
 from .bridge import WyzeCamera
 from .const import DOMAIN, DATA_KEY_CAMERA, CONFIG_KEY_MAC
 
@@ -37,7 +38,8 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry) -> bool:
     )
 
     session = async_get_clientsession(hass, False)
-    camera = WyzeCamera(hostname, port, name, session)
+    config_path = f"{hass.config.path(mac)}/wyze-camera.ini"
+    camera = WyzeCamera(hostname, port, name, session, config_path)
 
     # Stash the camera for access by remote entity setup
     hass.data.setdefault(DOMAIN, {})
