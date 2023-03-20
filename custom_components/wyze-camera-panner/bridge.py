@@ -3,6 +3,7 @@
 import configparser
 import logging
 import asyncio
+from pathlib import Path
 from aiohttp import ClientSession, ClientConnectionError, ClientResponseError
 
 _LOGGER = logging.getLogger(__name__)
@@ -171,6 +172,7 @@ class WyzeCamera:
         """Write the configuration settings to a file."""
         config = self._load_config()
         config.set(self.camera_name, "private", str(is_private))
+        Path(self._config_path).mkdir(exist_ok=True, parents=True)
         with open(self._config_path, "wt", encoding="utf-8") as handle:
             config.write(handle)
 
