@@ -1,5 +1,7 @@
-# wyze-camera-panner
+# Wyze Camera Panner
 Home Assistant component for panning a Wyze V3 camera via the docker-wyze-bridge
+
+[![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://github.com/hacs/integration)
 
 ## Features
 * Combines a camera view with a remote control for the camera
