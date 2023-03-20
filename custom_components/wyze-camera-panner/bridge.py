@@ -33,7 +33,7 @@ class WyzeCamera:
             async with self._session.get(url) as resp:
                 if resp.status == 200:
                     resp_data = await resp.json()
-                    print(f"{url}: {resp_data}")
+                    _LOGGER.debug("%s: %s", url, resp_data)
                     status = resp_data.get("status")
                     if status is not None:
                         return str(status).lower() == "connected"
@@ -50,7 +50,7 @@ class WyzeCamera:
             async with self._session.get(url) as resp:
                 if resp.status == 200:
                     resp_data = await resp.json()
-                    print(f"{url}: {resp_data}")
+                    _LOGGER.debug("%s: %s", url, resp_data)
                     status = resp_data.get("status")
                     if status is not None:
                         return bool(status)
@@ -73,7 +73,7 @@ class WyzeCamera:
                     if await self._is_camera_ready():
                         return True
                     await asyncio.sleep(0.5)
-        return False
+        return connected
 
     async def get_camera_mac(self) -> str | None:
         """Get the MAC address for this camera."""
@@ -82,6 +82,7 @@ class WyzeCamera:
                 if resp.status != 200:
                     return None
                 resp_data = await resp.json()
+                _LOGGER.debug("%s: %s", "get_camera_mac", resp_data)
                 camera_info = resp_data.get("camera_info")
                 if camera_info is not None:
                     basic_info = camera_info.get("basicInfo")
@@ -100,6 +101,7 @@ class WyzeCamera:
                 if resp.status != 200:
                     return None
                 resp_data = await resp.json()
+                _LOGGER.debug("%s: %s", "get_camera_model", resp_data)
                 camera_info = resp_data.get("camera_info")
                 if camera_info is not None:
                     basic_info = camera_info.get("basicInfo")
@@ -118,6 +120,7 @@ class WyzeCamera:
                 if resp.status != 200:
                     return None
                 resp_data = await resp.json()
+                _LOGGER.debug("%s: %s", "RTSP fetch", resp_data)
                 return str(resp_data.get("rtsp_url"))
         except ClientConnectionError:
             return None
@@ -139,7 +142,7 @@ class WyzeCamera:
                 async with self._session.get(url) as resp:
                     if resp.status == 200:
                         resp_data = await resp.json()
-                        print(f"{url}: {resp_data}")
+                        _LOGGER.debug("%s: %s", url, resp_data)
                         if resp_data.get("status") == "success":
                             return True
         except ClientConnectionError:
