@@ -168,6 +168,22 @@ class WyzeCamera:
             return True
         return False
 
+    async def pan_left(self) -> bool:
+        """Send a command to the camera to pan left."""
+        return await self._send_camera_command("set_rotary_left")
+
+    async def pan_right(self) -> bool:
+        """Send a command to the camera to pan right."""
+        return await self._send_camera_command("set_rotary_right")
+
+    async def pan_up(self) -> bool:
+        """Send a command to the camera to pan up."""
+        return await self._send_camera_command("set_rotary_up")
+
+    async def pan_down(self) -> bool:
+        """Send a command to the camera to pan down."""
+        return await self._send_camera_command("set_rotary_down")
+
     def _write_config(self, is_private: bool) -> None:
         """Write the configuration settings to a file."""
         config = self._load_config()

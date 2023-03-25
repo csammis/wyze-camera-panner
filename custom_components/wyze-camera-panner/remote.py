@@ -1,19 +1,23 @@
 """Remote entity for Wyze Camera Panning."""
 
 from typing import Any
+import time
 from collections.abc import Iterable
 import logging
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import DiscoveryInfoType
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.components.remote import RemoteEntityFeature
+from homeassistant.components.remote import (
+        ATTR_NUM_REPEATS,
+        ATTR_DELAY_SECS,
+        DEFAULT_DELAY_SECS,
+        )
 from homeassistant.const import CONF_NAME, CONF_MODEL
 from .const import DOMAIN, DATA_KEY_CAMERA, CONFIG_KEY_MAC
 from .bridge import WyzeCamera
 from . import CameraRemoteBase
 
-ACTIVITIES = ["Pan Left", "Pan Right", "Pan Up", "Pan Down"]
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -48,6 +52,7 @@ class CameraRemote(CameraRemoteBase):
 
     @property
     def is_on(self) -> bool | None:
+        """Return the camera's 'on' state"""
         return self._is_on
 
     async def async_turn_off(self, **kwargs: Any) -> None:
@@ -60,6 +65,13 @@ class CameraRemote(CameraRemoteBase):
         await self._camera.set_camera_to_straight_ahead()
         self._is_on = True
 
+    async def async_toggle(self, **kwargs: Any) -> None:
+        """Handle the service call to toggle the remote off or on."""
+        if self._is_on:
+            await self.async_turn_off()
+        else:
+            await self.async_turn_on()
+
     @property
     def unique_id(self) -> str:
         """Return this entity's unique ID."""
@@ -70,23 +82,27 @@ class CameraRemote(CameraRemoteBase):
         """Return this entity's name."""
         return f"{self._name}"
 
-    @property
-    def current_activity(self) -> str | None:
-        """Return the current activity."""
-        return self._current_activity
-
-    @property
-    def activity_list(self) -> list[str] | None:
-        """Return the possible activities."""
-        return ACTIVITIES
-
-    @property
-    def supported_features(self) -> RemoteEntityFeature:
-        """Return the supported feature."""
-        return RemoteEntityFeature(RemoteEntityFeature.ACTIVITY)
-
     async def async_send_command(self, command: Iterable[str], **kwargs: Any) -> None:
-        _LOGGER.info("Observed send_command %s", command)
+        """Process a command phrase being sent to the remote."""
+        num_repeats = kwargs.get(ATTR_NUM_REPEATS)
+        delay = kwargs.get(ATTR_DELAY_SECS, DEFAULT_DELAY_SECS)
+
+        supported_commands = {
+            "left": self._camera.pan_left,
+            "right": self._camera.pan_right,
+            "up": self._camera.pan_up,
+            "down": self._camera.pan_down
+        }
+
+        for _ in range(num_repeats):
+            for payload in command:
+                if payload in supported_commands:
+                    success = supported_commands[payload]()
+                    if not success:
+                        _LOGGER.warning("Unable to pan %s", payload)
+                else:
+                    _LOGGER.warning("%s is not a supported command", payload)
+                time.sleep(delay)
 
     async def async_update(self) -> None:
         """Update the camera's is-on state."""
