@@ -1,7 +1,7 @@
 """Remote entity for Wyze Camera Panning."""
 
 from typing import Any
-import time
+import asyncio
 from collections.abc import Iterable
 import logging
 from homeassistant.core import HomeAssistant
@@ -102,7 +102,8 @@ class CameraRemote(CameraRemoteBase):
                         _LOGGER.warning("Unable to pan %s", payload)
                 else:
                     _LOGGER.warning("%s is not a supported command", payload)
-                time.sleep(delay)
+
+                await asyncio.sleep(delay)
 
     async def async_update(self) -> None:
         """Update the camera's is-on state."""
